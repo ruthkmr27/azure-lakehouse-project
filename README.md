@@ -113,5 +113,5 @@ Author: Ruth Kumar — `annie.data.engineer@outlook.com` (repo owner)
 If you want: add LinkedIn/github/email contact information here.
 
 
-![Architecture](architecture/diagram.png)
+![Architecture](architecture/architecture.jpg)
 

@@ -1,14 +1,14 @@
 # Azure Lakehouse Project
 
 **Owner:** Ruth Kumar (ruthkmr27)
-**Project:** Azure Lakehouse — end-to-end example using Azure Synapse (Lakehouse pattern)
-**Status:** In progress — Day 1–5 notebooks added.
+**Repo:** azure-lakehouse-project
 
----
-
-## Project Summary
-This repository demonstrates a small Azure Lakehouse pipeline implemented on Azure Synapse Analytics.
-It contains sample notebooks used to ingest raw CSV data (Bronze), perform cleaning/transformations (Silver), and produce curated outputs (Gold) and a simple dimensional model. The notebooks are designed for learning and to showcase cloud-data engineering skills.
+## Project overview
+Small end-to-end demo of a Lakehouse on Azure using:
+- ADLS Gen2 (storage)
+- Azure Synapse (notebooks / Spark pool)
+- Delta format for silver/gold layers
+- Example ETL notebooks to move data Bronze → Silver → Gold
 
 ---
 
@@ -55,9 +55,6 @@ It contains sample notebooks used to ingest raw CSV data (Bronze), perform clean
 - A Synapse workspace with a Spark pool configured (or permissions to create one).
 - Python / PySpark knowledge for running notebooks.
 
-**Note:** Free-tier or trial subscriptions can still incur charges when compute (Spark pools, SQL pools) runs. Always stop or delete compute resources when not in use (see **Cost & Cleanup** below).
-
----
 
 ## How to run (high level)
 1. Create an Azure Resource Group and an ADLS Gen2 storage account.
@@ -70,7 +67,32 @@ It contains sample notebooks used to ingest raw CSV data (Bronze), perform clean
 - `NB_Gold_DimModel.ipynb` (build dimension model)
 6. Verify outputs in the lakehouse container (silver/ and gold/ paths).
 
+
+  ## How to run (quick)
+1. In Synapse Studio, open the notebook `notebooks/NB_BronzeToSilver.ipynb`.
+2. Attach to your Spark pool (select a small pool or low-vcore configuration).
+3. At top of each notebook edit the path variables to match your storage (example below).
+
+Example variables (update per your environment):
+```python
+bronze_path = "abfss://lakehouse@<your_account>.dfs.core.windows.net/bronze/customers_raw/customers.csv"
+silver_path = "abfss://lakehouse@<your_account>.dfs.core.windows.net/silver/customers/"
+gold_path = "abfss://lakehouse@<your_account>.dfs.core.windows.net/gold/customers_model/"
+
+
+Run cells sequentially:
+- BronzeToSilver: ingest raw CSV → writes Delta to `silver_path`
+- SilverToGold: transformations, dedupe, type-casting → writes Delta to `gold_path`
+- Gold_DimModel: create small dimensional model or query the gold table
+
+**If you don’t want to use ADLS right now**: upload the sample CSV in `notebooks/sample_data/customers_sample.csv` and point `bronze_path` to that file (web URL or storage path).
+
 ---
+
+## Goals / Learning outcomes
+- Build a simple lakehouse (bronze/silver/gold) in Azure Synapse with ADLS Gen2
+- Learn Spark notebook development and small Delta writes/reads
+- Understand minimal cost-control steps and workspace cleanup
 
 ## Notebooks summary
 - **NB_BronzeToSilver.ipynb** — reads CSV from `abfss://.../bronze/`, does cleaning, renames columns, writes Delta/Parquet to silver.
@@ -92,16 +114,7 @@ To avoid unexpected charges:
 
 I recommend deleting compute (Spark pools and SQL pools) at the end of every day if you are on a trial subscription.
 
----
 
-## Files to add (recommended)
-- `architecture/diagram.png` — diagram of the lakehouse.
-- `notebooks/` — notebook files (already present).
-- `screenshots/` — example Synapse screens (small & compressed).
-- `.gitignore` — ignore unnecessary files (`.ipynb_checkpoints`, `__pycache__`, etc).
-- `CLEANUP.md` (optional) — step-by-step cleanup commands.
-
----
 
 ## License
 This repository is licensed under the MIT License — see `LICENSE` for details.
